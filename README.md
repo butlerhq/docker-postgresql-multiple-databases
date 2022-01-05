@@ -15,6 +15,20 @@ mechanism.
 
 ## Usage
 
+### Using butler public repository
+
+Use image from butler public repository
+
+
+(`docker-compose` syntax):
+
+    myapp-postgresql:
+        image: public.ecr.aws/c1s5x5y2/butlerhq/postgres:12-alpine
+        environment:
+            - POSTGRES_MULTIPLE_DATABASES=db1,db2
+            - POSTGRES_USER=myapp
+            - POSTGRES_PASSWORD=
+
 ### By mounting a volume
 
 Clone the repository, mount its directory as a volume into
@@ -33,17 +47,18 @@ Clone the repository, mount its directory as a volume into
 
 ### By building a custom image
 
-Clone the repository, build and push the image to your Docker repository,
-for example for Google Private Repository do the following:
+Build and push the image to your Docker repository,
+for example for AWS ECR use the makefile
+    
+    DOCKER_REPO=public.ecr.aws/1234567 make ecr-login 
+    DOCKER_REPO=public.ecr.aws/1234567 IMAGE_NAME=postgres POSTGRES_IMAGE_TAG=9.6 make docker-postgres
 
-    docker build --tag=eu.gcr.io/your-project/postgres-multi-db .
-    gcloud docker -- push eu.gcr.io/your-project/postgres-multi-db
 
 You still need to pass the `POSTGRES_MULTIPLE_DATABASES` environment variable
 to the container:
 
     myapp-postgresql:
-        image: eu.gcr.io/your-project/postgres-multi-db
+        image: public.ecr.aws/1234567/postgres:POSTGRES_IMAGE_TAG
         environment:
             - POSTGRES_MULTIPLE_DATABASES=db1,db2
             - POSTGRES_USER=myapp
